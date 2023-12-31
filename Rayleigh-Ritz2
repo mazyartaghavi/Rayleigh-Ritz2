@@ -1,0 +1,66 @@
+from scipy.integrate import quad
+from scipy.optimize import minimize
+import numpy as np
+
+def p(x):
+    # Define your function p(x) here
+    return ...
+
+def q(x):
+    # Define your function q(x) here
+    return ...
+
+def g(x):
+    # Define your function g(x) here
+    return ...
+
+def F(x, y, y_prime):
+    return p(x) * y_prime**2 + q(x) * y**2 + g(x) * y
+
+def trial_function(x, params):
+    # Define your trial function here using the parameters
+    # For example, a linear trial function: y(x) = params[0] + params[1]*x
+    return ...
+
+def functional(params, a, b, c1, c2):
+    def integrand(x):
+        y = trial_function(x, params)
+        y_prime = np.gradient(y, x)
+        return F(x, y, y_prime)
+
+    # Solve for the parameters that minimize the functional J(y)
+    result, _ = quad(integrand, a, b)
+    return result
+
+def solve_rayleigh_ritz(a, b, c1, c2):
+    # Initial guess for the parameters of the trial function
+    initial_params = [...]
+
+    # Minimize the functional J(y) using the Rayleigh-Ritz method
+    result = minimize(functional, initial_params, args=(a, b, c1, c2))
+
+    if result.success:
+        # Extract the optimized parameters
+        optimized_params = result.x
+
+        # Compute the final solution using the optimized parameters
+        x = np.linspace(a, b, num=100)  # Adjust the number of points as needed
+        y = trial_function(x, optimized_params)
+
+        return x, y
+    else:
+        print("Rayleigh-Ritz method failed to converge.")
+        return None
+
+# Example usage
+a = ...  # Enter the value of a
+b = ...  # Enter the value of b
+c1 = ...  # Enter the value of c1
+c2 = ...  # Enter the value of c2
+
+# Define your functions p(x), q(x), and g(x) here
+
+# Solve the problem using the Rayleigh-Ritz method
+x, y = solve_rayleigh_ritz(a, b, c1, c2)
+
+# Print or plot the results as desired
